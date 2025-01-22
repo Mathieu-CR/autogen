@@ -1,0 +1,26 @@
+services:
+  backend:
+    build:
+      context: . # Utilise le Dockerfile à la racine pour le backend
+    ports:
+      - "8081:8081" # Expose le backend sur le port 8081
+    volumes:
+      - .:/app # Monte tout le projet pour le backend
+    environment:
+      FLASK_ENV: development # Exemple si le backend est Flask
+    stdin_open: true
+    tty: true
+
+  frontend:
+    build:
+      context: ./frontend # Utilise le Dockerfile dans ./frontend pour le frontend
+    ports:
+      - "8000:8000" # Expose le frontend sur le port 8000
+    volumes:
+      - ./frontend:/app # Monte le dossier frontend
+    environment:
+      GATSBY_API_URL: "http://backend:8081/api" # Lien avec le backend
+    depends_on:
+      - backend # Assure que le backend démarre avant le frontend
+    stdin_open: true
+    tty: true

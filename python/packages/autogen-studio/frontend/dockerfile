@@ -1,0 +1,25 @@
+FROM node:18-alpine
+
+# Set working directory
+WORKDIR /app
+
+# Copy only necessary files for dependency installation
+COPY package.json yarn.lock ./
+
+# Install dependencies
+RUN yarn install --frozen-lockfile
+
+# Install Gatsby CLI globally (nécessaire si yarn start appelle Gatsby CLI)
+RUN yarn global add gatsby-cli
+
+# Copy all project files
+COPY . .
+
+# Expose the port used by Gatsby
+EXPOSE 8000
+
+# Clean Gatsby cache to avoid issues
+RUN yarn clean || gatsby clean
+
+# Run the application in development mode using yarn start
+CMD ["yarn", "start", "--host", "0.0.0.0"]
